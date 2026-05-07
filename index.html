@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio | Weekly Progress</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f43f5e;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem;
+            background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+        }
+
+        .hero h1 span {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--gradient-1);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .cta-button:hover { transform: translateY(-3px); }
+
+        /* Timeline & Cards */
+        .timeline-section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+        
+        .week-filter { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .week-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .week-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .week-number {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--gradient-1);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 2.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: none; border: none;
+            color: white; font-size: 2rem; cursor: pointer;
+        }
+
+        /* About & Contact */
+        .about-section, .contact-section { padding: 6rem 2rem; text-align: center; }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-item { background: var(--bg-card); padding: 1rem; border-radius: 10px; border: 1px solid var(--border); }
+
+        .contact-link {
+            text-decoration: none; color: white;
+            padding: 0.7rem 1.5rem; border: 1px solid var(--border);
+            border-radius: 50px; margin: 0.5rem; display: inline-block;
+        }
+        .contact-link:hover { background: var(--primary); border-color: var(--primary); }
+
+        footer { padding: 2rem; text-align: center; border-top: 1px solid var(--border); color: var(--text-secondary); }
+
+        @media (max-width: 768px) { .weeks-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Portfolio</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#timeline">Timeline</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>My <span>Learning Journey</span></h1>
+            <p>A 15-week portfolio documenting my progress and growth.</p>
+            <a href="#timeline" class="cta-button">View My Progress</a>
+        </div>
+    </section>
+
+    <section class="timeline-section" id="timeline">
+        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+            <h2>Weekly Progress</h2>
+            <p>15 of 15 weeks completed</p>
+        </div>
+
+        <div class="week-filter">
+            <button class="filter-btn active" data-filter="all">All Weeks</button>
+            <button class="filter-btn" data-filter="early">1-5</button>
+            <button class="filter-btn" data-filter="mid">6-10</button>
+            <button class="filter-btn" data-filter="late">11-15</button>
+        </div>
+
+        <div class="weeks-grid" id="weeksGrid"></div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2>About This Portfolio</h2>
+            <p>Building a strong foundation in modern web development.</p>
+            <div class="skills-grid">
+                <div class="skill-item">💻 HTML/CSS</div>
+                <div class="skill-item">⚡ JavaScript</div>
+                <div class="skill-item">🎨 UI/UX</div>
+                <div class="skill-item">🔧 Git</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <h2>Get In Touch</h2>
+        <div class="contact-links">
+            <a href="karlmarxnarvaez@gmail.com" class="contact-link">📧 Email</a>
+            <a href="https://github.com" class="contact-link" target="_blank">💻 GitHub</a>
+        </div>
+    </section>
+
+    <footer><p>© 2026 OCTA Portfolio</p></footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const weeksData = [
+    { week: 1, title: "Orientation & Introduction", summary: "System overview and onboarding.", tags: ["Orientation"], reflection: "Learned workflow basics.", image: "images/week1.jpg" },
+
+    { week: 2, title: "System Development Start", summary: "Analyzed system requirements.", tags: ["Analysis"], reflection: "Understood structure.", image: "images/week2.png" },
+
+    { week: 3, title: "Database Schema Design", summary: "Designed database structure.", tags: ["Structure"], reflection: "Designed the database schema and Entity-Relationship Diagrams (ERD)..", image: "images/week3.png" },
+
+    { week: 4, title: "UI/UX Design", summary: "Created wireframes and mockups.", tags: ["Designing"], reflection: "Created user interface wireframes and established visual branding.", image: "images/week4.png" },
+
+    { week: 5, title: "Frontend Development", summary: "Developed frontend components.", tags: ["Developing"], reflection: "Built the frontend structure using responsive HTML and CSS.", image: "images/week5.png" },
+
+    { week: 6, title: "PHP Backend Development", summary: "Established backend functionality.", tags: ["Developing"], reflection: "Established the PHP backend and database connection scripts.", image: "images/week6.png" },
+
+    { week: 7, title: "CRUD Implementation", summary: "Built the admin panel.", tags: ["Implementing"], reflection: "Developed secure data update and deletion management tools..", image: "images/week7.png" },
+
+    { week: 8, title: "Admin Panel Development", summary: "Developed a secure login system.", tags: ["Development"], reflection: "Integrated a secure user authentication and login system.", image: "images/week8.png" },
+
+    { week: 9, title: "Debugging & Port Configuration", summary: "Resolved critical server issues.", tags: ["Debugging"], reflection: "Resolved server-side port conflicts and environment errors.", image: "images/week9.jpg" },
+
+    { week: 10, title: "Data Migration & Collation Fixes", summary: "Handled complex data migration tasks.", tags: ["Debugging"], reflection: "Fixed database collation issues to ensure data integrity.", image: "images/week10.jpg" },
+
+    { week: 11, title: "UI Refinement & Branding", summary: "Customized the user interface.", tags: ["Refinement"], reflection: "Handled feedback.", image: "images/week11.png" },
+
+    { week: 12, title: "Quality Assurance & Testing", summary: "Conducted thorough testing.", tags: ["Finalizing"], reflection: "Technical Troubleshooting.", image: "images/week12.jpg" }
+];
+
+        function renderWeeks(filter = 'all') {
+            const grid = document.getElementById('weeksGrid');
+            grid.innerHTML = '';
+            let filtered = weeksData;
+            if (filter === 'early') filtered = weeksData.slice(0, 5);
+            if (filter === 'mid') filtered = weeksData.slice(5, 10);
+            if (filter === 'late') filtered = weeksData.slice(10, 15);
+
+            filtered.forEach(w => {
+                const card = document.createElement('div');
+                card.className = 'week-card';
+                card.onclick = () => openModal(w);
+                card.innerHTML = `<span class="week-number">Week ${w.week}</span><h3>${w.title}</h3><p>${w.summary}</p>${w.tags.map(t => `<span class="tag">${t}</span>`).join('')}`;
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(w) {
+             document.getElementById('modalBody').innerHTML = `
+        <h3>Week ${w.week}: ${w.title}</h3>
+        
+        <img src="${w.image}" alt="Week ${w.week}" 
+             style="width:100%; margin-top:1rem; border-radius:10px;">
+        
+        <p style="margin-top:1rem">${w.reflection}</p>
+    `;
+    document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                renderWeeks(btn.dataset.filter);
+            };
+        });
+
+        renderWeeks();
+    </script>
+</body>
+</html>
